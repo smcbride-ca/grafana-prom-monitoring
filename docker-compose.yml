@@ -21,6 +21,7 @@ services:
     ports:
      - 3023:3000
     restart: unless-stopped
+    env_file: .env
     environment:
       - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-h44w&2@fhM4Ca!SD}
