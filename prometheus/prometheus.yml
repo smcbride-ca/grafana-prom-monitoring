@@ -1,0 +1,56 @@
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "node-exporter"
+    static_configs:
+      - targets: ["node_exporter:9100"] # The server running prometheus, do not change
+        labels:
+            instance: 'host-server'
+
+      - targets: ["example-ip:9100"] # Use the IP and port (default) for linux machines
+        labels:
+            instance: 'example-linux'
+
+  - job_name: "windows-exporter"
+    static_configs:
+      - targets: ["example-ip:9182"] # Use the IP and port (default) for windows machines
+        labels:
+            instance: 'example-windows'
+
+  - job_name: "snmp" # For more info, see the snmp_exporter docs
+    metrics_path: '/snmp'
+    params:
+        target: ["example-ip"] # The IP of the device you're monitoring via SNMP
+        auth: ["public_v2"]
+        module: ["if_mib"]
+    static_configs:
+      - targets: ["snmp-exporter:9116"] # Does not need to be changed
+        labels:
+            instance: 'example-snmp'
